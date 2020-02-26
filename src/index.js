@@ -12,17 +12,9 @@ function Student(name, surname, yearOfBirth) {
     this.mark = ball => this.marksArr[getIndexOfMarks()] = ball;
 
     this.getAverageVisiting = function () {
-        let realVisit = 0;
-        let possibleVisit = 0;
-        for (let i = 0; i < this.visitArr.length; i++) {
-            if (this.visitArr[i] === true) {
-                realVisit++;
-                possibleVisit++;
-            } else if (this.visitArr[i] === false) {
-                possibleVisit++;
-            }
-        }
-        return realVisit / possibleVisit;
+        const lessons = this.visitArr.filter(lesson => lesson !== undefined); // eslint-disable-line
+        const trueVisits = this.visitArr.filter(visit => visit === true);
+        return trueVisits.length / lessons.length;
     };
 
     this.getAverageMark = function () {
