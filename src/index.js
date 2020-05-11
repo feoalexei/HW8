@@ -1,56 +1,113 @@
-function Student(name, surname, yearOfBirth) {
-    this.name = name;
-    this.surname = surname;
-    this.yearOfBirth = yearOfBirth;
-    this.getAge = () => (new Date).getFullYear() - yearOfBirth;
-    this.marksArr = new Array(30); // eslint-disable-line
-    this.visitArr = new Array(30); // eslint-disable-line
-    const getIndexOfVisiting = () => this.visitArr.findIndex(element => element === undefined); // eslint-disable-line
-    const getIndexOfMarks = () => this.marksArr.findIndex(element => element === undefined); // eslint-disable-line
-    this.present = () => this.visitArr[getIndexOfVisiting()] = true;
-    this.absent = () => this.visitArr[getIndexOfVisiting()] = false;
-    this.mark = ball => this.marksArr[getIndexOfMarks()] = ball;
+/* eslint-disable */
+'use strict'
 
-    this.getAverageVisiting = function () {
-        const lessons = this.visitArr.filter(lesson => lesson !== undefined); // eslint-disable-line
-        const trueVisits = this.visitArr.filter(visit => visit === true);
-        return trueVisits.length / lessons.length;
-    };
+class User {
+    constructor(name, surname, yearOfBirth) {
+        this.name = name;
+        this.surname = surname;
+        this.yearOfBirth = yearOfBirth;
+    }
 
-    this.getAverageMark = function () {
-        let receivedMarksArr = this.marksArr.slice(0, getIndexOfMarks()); // eslint-disable-line
-        return receivedMarksArr.reduce((prev, elem) => prev + elem) / receivedMarksArr.length;
-    };
+    get age() {
+        return (new Date).getFullYear() - this.yearOfBirth;
+    }
 
-    const goodMark = 9;
-    const goodVisiting = .9;
-    this.summary = function () {
-        if ((this.getAverageMark() >= goodMark) && (this.getAverageVisiting() >= goodVisiting)) {
-            return 'OMG, wtf a good student you are!';
-        } else if ((this.getAverageMark() < goodMark) || (this.getAverageVisiting() < goodVisiting)) {
-            return 'Not bad, but you can do it better';
-        } else return 'Bad student';
-    };
+    get fullName() {
+        return `${this.name} ${this.surname}`
+    }
 }
 
-const heruntz = new Student('Erik', 'Heruntz', '1984');
+class Student extends User {
+    constructor(name, surname, yearOfBirth) {
+        super(name, surname, yearOfBirth);
 
-heruntz.absent();
-heruntz.present();
-heruntz.present();
-heruntz.present();
-heruntz.present();
+        this.marksArr = new Array(30);
+        this.visitArr = new Array(30);
 
-heruntz.mark(0); // eslint-disable-line
-heruntz.mark(10); // eslint-disable-line
-heruntz.mark(5); // eslint-disable-line
-heruntz.mark(9); // eslint-disable-line
-heruntz.mark(8); // eslint-disable-line
+        const getIndex = (array) => array.findIndex(element => element === undefined)
 
-console.log('Student\'s attendance: ' + heruntz.visitArr.join(' | ')); // eslint-disable-line
-console.log('Student\'s good studing: ' + heruntz.marksArr.join(' | ')); // eslint-disable-line
-console.log('Student\'s average mark: ' + heruntz.getAverageMark()); // eslint-disable-line
-console.log('Student\'s average attendance: ' + heruntz.getAverageVisiting()); // eslint-disable-line
-console.log('Student\'s rating: ' + heruntz.summary()); // eslint-disable-line
+        this.mark = ball => this.marksArr[getIndex(this.marksArr)] = ball;
 
-console.log(heruntz); // eslint-disable-line
+        this.visiting = visit => {
+            visit ? this.visitArr[getIndex(this.visitArr)] = '+'
+                : this.visitArr[getIndex(this.visitArr)] = '-';
+        }
+    }
+
+    get averageVisit() {
+        const lessons = this.visitArr.filter(lesson => lesson !== undefined);
+        const trueVisits = this.visitArr.filter(visit => visit === '+');
+        return trueVisits.length / lessons.length;
+    }
+
+    get averageMark() {
+        const receivedMarksArr = this.marksArr.filter(mark => mark !== undefined);
+        return receivedMarksArr.reduce((prev, elem) => prev + elem) / receivedMarksArr.length;
+    }
+}
+
+class Teacher extends User {
+    constructor(name, surname, yearOfBirth) {
+        super(name, surname, yearOfBirth);
+        this.activeGroups = [];
+        this.groups = [];
+    }
+
+    set addGroup(groupName) {
+        this.groups.push({
+            name: groupName,
+            isActive: true
+        }),
+        
+        this.activeGroups = this.groups.slice(0)   
+    }
+
+    changeStatus(groupName, status = true) {
+        if (!status)
+            this.activeGroups.forEach((group,index) => {
+                if (group.name === groupName) {
+                    group.isActive = false;
+                    this.activeGroups.splice(index, 1);
+                }
+            });
+        else
+            this.groups.forEach(group => {
+                if (group.name === groupName && !(this.activeGroups.includes(group))) {
+                    group.isActive = true;
+                    this.activeGroups.push(group);
+                }
+            })
+    }
+}
+
+// const winston = new Student('Winston', 'Smith', 1954);
+// const george = new Teacher('George', 'Orwell', 1984);
+
+// george.addGroup = 'Front-End Pro';
+// george.addGroup = 'Front-End Basic';
+// george.addGroup = 'DevOps';
+
+// george.changeStatus('Front-End Pro', false);
+// george.changeStatus('Front-End Pro');
+// george.changeStatus('DevOps', false);
+
+// winston.mark(5);
+// winston.mark(10);
+
+// winston.visiting(true);
+// winston.visiting(false);ls
+
+// console.log(george);
+// console.log(george.groups);
+// console.log(george.activeGroups);
+
+
+
+
+
+
+
+
+
+
+
